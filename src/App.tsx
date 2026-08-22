@@ -17,12 +17,11 @@ function App() {
         </p>
 
         <div className="rounded-xl bg-slate-100 p-4 text-sm text-slate-700">
-          Siguiente paso: configurar variables de entorno, cliente HTTP y módulo
-          de autenticación.
+          Siguiente paso: configurar variables de entorno, cliente HTTP y módulo de autenticación.
         </div>
       </section>
     </main>
-  )
+  );
 }
 
-export default App
+export default App;

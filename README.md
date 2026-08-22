@@ -19,3 +19,4 @@ Frontend web de Parkio construido con React, Vite, TypeScript y Tailwind CSS.
 
 ```powershell
 corepack pnpm install
+```
