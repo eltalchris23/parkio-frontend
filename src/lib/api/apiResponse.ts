@@ -1,3 +1,5 @@
+// SON OTROS DTOS QUE SON PARA RESPONSE COMO EN JAVA
+
 /**
  * Representa la respuesta estándar exitosa del backend Parkio.
  *

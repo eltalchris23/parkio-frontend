@@ -1,3 +1,6 @@
+// ESTE ARCHIVO ES COMO EL DTO EN JAVA
+// AQUI DECLARO MIS OBJETOS
+
 /**
  * Request enviado al backend para iniciar sesión.
  *
