@@ -52,8 +52,8 @@ export function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
-      <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+    <main className="parkio-app-background flex min-h-screen items-center justify-center px-4">
+      <section className="parkio-glass-card-strong w-full max-w-md rounded-[2rem] p-8">
         <div className="mb-8 text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Parkio</p>
 
@@ -78,7 +78,7 @@ export function LoginPage() {
 
             <input
               autoComplete="email"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-slate-900 shadow-inner shadow-slate-200/60 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               id="email"
               name="email"
               onChange={(event) => setEmail(event.target.value)}
@@ -96,7 +96,7 @@ export function LoginPage() {
 
             <input
               autoComplete="current-password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-2xl border border-white/80 bg-white/80 px-4 py-3 text-slate-900 shadow-inner shadow-slate-200/60 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               id="password"
               name="password"
               onChange={(event) => setPassword(event.target.value)}
@@ -108,7 +108,7 @@ export function LoginPage() {
           </div>
 
           <button
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+            className="parkio-primary-button w-full rounded-2xl px-4 py-3 font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-blue-300"
             disabled={submitting}
             type="submit"
           >

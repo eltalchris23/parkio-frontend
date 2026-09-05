@@ -7,6 +7,15 @@
   Aquí solo dejamos reglas globales mínimas para toda la aplicación.
 */
 :root {
+  --parkio-bg: #eef2f7;
+  --parkio-surface: rgba(255, 255, 255, 0.82);
+  --parkio-surface-strong: rgba(255, 255, 255, 0.92);
+  --parkio-primary: #2563eb;
+  --parkio-dark: #020617;
+  --parkio-success: #34d399;
+  --parkio-warning: #f59e0b;
+  --parkio-danger: #ef4444;
+
   font-family:
     Inter,
     ui-sans-serif,
@@ -16,7 +25,7 @@
     'Segoe UI',
     sans-serif;
   color: #0f172a;
-  background: #f8fafc;
+  background: var(--parkio-bg);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -31,6 +40,10 @@ body {
   min-width: 320px;
   min-height: 100vh;
   margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 32rem),
+    radial-gradient(circle at top right, rgba(52, 211, 153, 0.18), transparent 28rem),
+    var(--parkio-bg);
 }
 
 /*
@@ -38,4 +51,52 @@ body {
 */
 #root {
   min-height: 100vh;
+}
+
+/*
+  Fondo principal de la aplicación.
+
+  Centraliza el efecto visual suave para evitar repetir gradientes
+  en cada pantalla o layout.
+*/
+.parkio-app-background {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.16), transparent 32rem),
+    radial-gradient(circle at top right, rgba(52, 211, 153, 0.18), transparent 28rem),
+    var(--parkio-bg);
+}
+
+/*
+  Tarjeta tipo glass/soft 3D.
+
+  Se usa para tarjetas importantes, formularios y paneles destacados.
+  Combina fondo translúcido, borde claro, blur y sombra suave.
+*/
+.parkio-glass-card {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: var(--parkio-surface);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(16px);
+}
+
+/*
+  Variante más sólida para zonas donde se requiere máxima lectura,
+  por ejemplo formularios o contenido con mucho texto.
+*/
+.parkio-glass-card-strong {
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  background: var(--parkio-surface-strong);
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+/*
+  Botón principal de Parkio.
+
+  Mantiene una acción fuerte y clara, inspirada en el contraste oscuro
+  de la referencia visual.
+*/
+.parkio-primary-button {
+  background: var(--parkio-dark);
+  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.28);
 }
