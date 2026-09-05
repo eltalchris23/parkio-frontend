@@ -52,17 +52,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * 1. Envía email y password a /auth/login.
    * 2. Guarda el JWT recibido.
    * 3. Consulta /auth/me para cargar usuario, roles y estacionamientos vigentes.
+   * 4. Si /auth/me falla, elimina el token para no dejar una sesión inválida.
    */
-  const login = useCallback(
-    async (request: AuthLoginRequest) => {
-      const authResponse = await loginRequest(request);
+  const login = useCallback(async (request: AuthLoginRequest) => {
+    const authResponse = await loginRequest(request);
 
-      saveAccessToken(authResponse.accessToken);
+    saveAccessToken(authResponse.accessToken);
 
-      await refreshCurrentUser();
-    },
-    [refreshCurrentUser],
-  );
+    try {
+      const currentUser = await getCurrentUser();
+
+      setUser(currentUser);
+    } catch (error) {
+      removeAccessToken();
+      setUser(null);
+
+      throw error;
+    }
+  }, []);
 
   /**
    * Cierra la sesión local.

@@ -1,39 +1,142 @@
-import { Link } from 'react-router-dom';
+import axios from 'axios';
+import type { FormEvent } from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import type { ApiError } from '../../../lib/api/apiResponse';
+import { useAuth } from '../hooks/useAuth';
 
 /**
- * Pantalla temporal de login.
+ * Pantalla de inicio de sesión.
  *
- * En esta etapa solo valida que React Router funciona correctamente.
- * Después se reemplazará por el formulario real de autenticación.
+ * Permite capturar email y contraseña, consumir el endpoint /auth/login
+ * y redirigir al usuario autenticado al home de la aplicación.
  */
 export function LoginPage() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /**
+   * Procesa el envío del formulario de login.
+   *
+   * Si las credenciales son correctas:
+   * - Guarda el token mediante AuthProvider.
+   * - Carga el usuario autenticado.
+   * - Redirige a /home.
+   *
+   * Si ocurre un error:
+   * - Muestra el mensaje devuelto por el backend cuando exista.
+   */
+  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+
+    setSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      await login({
+        email,
+        password,
+      });
+
+      navigate('/home');
+    } catch (error) {
+      setErrorMessage(getLoginErrorMessage(error));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 px-6 py-10 text-slate-900">
-      <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-wide text-emerald-600">Parkio</p>
+    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+      <section className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
+        <div className="mb-8 text-center">
+          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Parkio</p>
 
-        <h1 className="mt-2 text-3xl font-bold tracking-tight">Iniciar sesión</h1>
+          <h1 className="mt-2 text-3xl font-bold text-slate-900">Iniciar sesión</h1>
 
-        <p className="mt-4 text-sm text-slate-600">
-          Aquí irá el formulario real para autenticar usuarios contra el backend.
-        </p>
+          <p className="mt-2 text-sm text-slate-500">
+            Accede con tu cuenta para administrar o usar Parkio.
+          </p>
+        </div>
 
-        <div className="mt-6 flex flex-col gap-3">
-          <Link
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-center font-semibold text-white hover:bg-emerald-700"
-            to="/home"
+        {errorMessage && (
+          <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
+        )}
+
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="email">
+              Correo electrónico
+            </label>
+
+            <input
+              autoComplete="email"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              id="email"
+              name="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="correo@ejemplo.com"
+              required
+              type="email"
+              value={email}
+            />
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-slate-700" htmlFor="password">
+              Contraseña
+            </label>
+
+            <input
+              autoComplete="current-password"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-slate-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              id="password"
+              name="password"
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="Tu contraseña"
+              required
+              type="password"
+              value={password}
+            />
+          </div>
+
+          <button
+            className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300"
+            disabled={submitting}
+            type="submit"
           >
-            Ir a home temporal
-          </Link>
+            {submitting ? 'Ingresando...' : 'Ingresar'}
+          </button>
+        </form>
 
-          <Link
-            className="text-center text-sm font-medium text-emerald-700 hover:text-emerald-800"
-            to="/register"
-          >
+        <p className="mt-6 text-center text-sm text-slate-500">
+          ¿No tienes cuenta?{' '}
+          <Link className="font-semibold text-blue-600 hover:text-blue-700" to="/register">
             Crear cuenta
           </Link>
-        </div>
+        </p>
       </section>
     </main>
   );
+}
+
+/**
+ * Obtiene un mensaje entendible para el usuario cuando falla el login.
+ *
+ * Si el backend responde con ApiError, se muestra su campo message.
+ * Si no existe una respuesta conocida, se usa un mensaje genérico.
+ */
+function getLoginErrorMessage(error: unknown): string {
+  if (axios.isAxiosError<ApiError>(error)) {
+    return error.response?.data.message ?? 'No fue posible iniciar sesión.';
+  }
+
+  return 'Ocurrió un error inesperado al iniciar sesión.';
 }
