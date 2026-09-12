@@ -14,3 +14,15 @@ export type UsuarioResponse = {
   roles: string[];
   estacionamientoIds: number[];
 };
+
+/**
+ * Request para crear un usuario desde el frontend.
+ *
+ * Coincide con el DTO de creación del backend.
+ */
+export type UsuarioCreateRequest = {
+  nombre: string;
+  apellido: string | null;
+  email: string;
+  password: string;
+};

@@ -1,6 +1,6 @@
 import { axiosClient } from '../../../lib/api/axiosClient';
 import type { ApiResponse, PageResponse } from '../../../lib/api/apiResponse';
-import type { UsuarioResponse } from '../types/usuarioTypes';
+import type { UsuarioCreateRequest, UsuarioResponse } from '../types/usuarioTypes';
 
 /**
  * Parámetros aceptados para consultar usuarios paginados.
@@ -31,6 +31,20 @@ export async function getUsuarios(
   const response = await axiosClient.get<ApiResponse<PageResponse<UsuarioResponse>>>('/usuarios', {
     params,
   });
+
+  return response.data.data;
+}
+
+/**
+ * Crea un usuario nuevo en el backend.
+ *
+ * El backend asigna automáticamente el rol base USER durante la creación pública.
+ *
+ * @param request datos capturados desde el formulario
+ * @returns usuario creado
+ */
+export async function createUsuario(request: UsuarioCreateRequest): Promise<UsuarioResponse> {
+  const response = await axiosClient.post<ApiResponse<UsuarioResponse>>('/usuarios', request);
 
   return response.data.data;
 }

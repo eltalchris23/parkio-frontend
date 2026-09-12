@@ -10,6 +10,7 @@ type UsuariosToolbarProps = {
   onSearchTextChange: (value: string) => void;
   onClearSearch: () => void;
   onPageSizeChange: (value: string) => void;
+  onCreateUsuario: () => void;
 };
 
 /**
@@ -27,6 +28,7 @@ export function UsuariosToolbar({
   onSearchTextChange,
   onClearSearch,
   onPageSizeChange,
+  onCreateUsuario,
 }: UsuariosToolbarProps) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -65,6 +67,7 @@ export function UsuariosToolbar({
 
       <button
         className="parkio-primary-button whitespace-nowrap rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition hover:bg-slate-800"
+        onClick={onCreateUsuario}
         type="button"
       >
         Nuevo usuario

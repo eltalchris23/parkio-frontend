@@ -7,6 +7,7 @@ import { getUsuarios } from '../api/usuariosApi';
 import { UsuariosPagination } from '../components/UsuariosPagination';
 import { UsuariosTable } from '../components/UsuariosTable';
 import { UsuariosToolbar } from '../components/UsuariosToolbar';
+import { UsuarioCreateModal } from '../components/UsuarioCreateModal';
 import type { UsuarioResponse } from '../types/usuarioTypes';
 
 /**
@@ -20,6 +21,7 @@ export function UsuariosPage() {
   const [currentPage, setCurrentPage] = useState(0);
   const [pageSize, setPageSize] = useState(2);
   const [searchText, setSearchText] = useState('');
+  const [createModalOpened, setCreateModalOpened] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -127,6 +129,31 @@ export function UsuariosPage() {
   }
 
   /**
+   * Abre el modal de creación de usuarios.
+   */
+  function handleOpenCreateModal(): void {
+    setCreateModalOpened(true);
+  }
+
+  /**
+   * Cierra el modal de creación de usuarios.
+   */
+  function handleCloseCreateModal(): void {
+    setCreateModalOpened(false);
+  }
+
+  /**
+   * Recarga el listado cuando se crea un usuario correctamente.
+   *
+   * Si estamos en una página diferente a la primera, regresamos a la primera
+   * para que el usuario recién creado pueda aparecer según el ordenamiento actual.
+   */
+  function handleUsuarioCreated(): void {
+    setCurrentPage(0);
+    void loadUsuarios();
+  }
+
+  /**
    * Carga usuarios cuando entra la pantalla
    * y también cada vez que cambie currentPage o pageSize
    */
@@ -135,51 +162,60 @@ export function UsuariosPage() {
   }, [loadUsuarios]);
 
   return (
-    <section className="parkio-glass-card rounded-[2rem] p-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Módulo</p>
+    <>
+      <section className="parkio-glass-card rounded-[2rem] p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wide text-blue-600">Módulo</p>
 
-          <h1 className="mt-2 text-3xl font-black text-slate-950">Usuarios</h1>
+            <h1 className="mt-2 text-3xl font-black text-slate-950">Usuarios</h1>
 
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
-            Consulta inicial de usuarios registrados en Parkio. Esta pantalla usa el endpoint
-            paginado del backend.
-          </p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-600">
+              Consulta inicial de usuarios registrados en Parkio. Esta pantalla usa el endpoint
+              paginado del backend.
+            </p>
+          </div>
+
+          <UsuariosToolbar
+            onClearSearch={handleClearSearch}
+            onCreateUsuario={handleOpenCreateModal}
+            onPageSizeChange={handlePageSizeChange}
+            onSearchTextChange={setSearchText}
+            pageSize={pageSize}
+            searchText={searchText}
+          />
         </div>
 
-        <UsuariosToolbar
-          onClearSearch={handleClearSearch}
-          onPageSizeChange={handlePageSizeChange}
-          onSearchTextChange={setSearchText}
-          pageSize={pageSize}
-          searchText={searchText}
-        />
-      </div>
+        {loading && <LoadingState message="Cargando usuarios..." />}
 
-      {loading && <LoadingState message="Cargando usuarios..." />}
+        {errorMessage && <ErrorState message={errorMessage} />}
 
-      {errorMessage && <ErrorState message={errorMessage} />}
+        {!loading && !errorMessage && (
+          <div className="mt-8 overflow-hidden rounded-2xl border border-white/70 bg-white/70 shadow-sm">
+            <UsuariosTable usuarios={filteredUsuarios} />
 
-      {!loading && !errorMessage && (
-        <div className="mt-8 overflow-hidden rounded-2xl border border-white/70 bg-white/70 shadow-sm">
-          <UsuariosTable usuarios={filteredUsuarios} />
+            {filteredUsuarios.length === 0 && (
+              <EmptyState message="No se encontraron usuarios con los filtros actuales." />
+            )}
 
-          {filteredUsuarios.length === 0 && (
-            <EmptyState message="No se encontraron usuarios con los filtros actuales." />
-          )}
+            {usuariosPage && (
+              <UsuariosPagination
+                currentPageUsersCount={currentPageUsersCount}
+                filteredCount={filteredUsuarios.length}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+                usuariosPage={usuariosPage}
+              />
+            )}
+          </div>
+        )}
+      </section>
 
-          {usuariosPage && (
-            <UsuariosPagination
-              currentPageUsersCount={currentPageUsersCount}
-              filteredCount={filteredUsuarios.length}
-              onNextPage={handleNextPage}
-              onPreviousPage={handlePreviousPage}
-              usuariosPage={usuariosPage}
-            />
-          )}
-        </div>
-      )}
-    </section>
+      <UsuarioCreateModal
+        onClose={handleCloseCreateModal}
+        onUsuarioCreated={handleUsuarioCreated}
+        opened={createModalOpened}
+      />
+    </>
   );
 }
